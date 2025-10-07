@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Feedback</title>
+</head>
+<body>
+    <header>
+        <h1>Taylor's World</h1>
+        <p>Not just albums — chapters of a life in lyrics.</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Swiftie Hub</a></li>
+            <li><a href="login.html">Join the Era</a></li>
+            <li><a href="registration.html">Become a Swiftie</a></li>
+            <li><a href="feedback.html">Share Your Story</a></li>
+        </ul>
+    </nav>
+    <h3>Feedback</h3>
+    <form id="feedbackForm" method="post" enctype="multipart/form-data">
+        <fieldset>
+            <legend>Personal Information ✏️</legend>
+            <label for="name">First Name 🙂</label>
+            <input type="text" id="name" name="name" placeholder="Taylor"> <br>
+            <label for="surname">Last Name 📝</label>
+            <input type="text" id="surname" name="surname" placeholder="Swift"> <br>
+            <label for="email2">Email 💌</label>
+            <input type="email" id="email2" name="email2" placeholder="example@domain.com"> <br>
+            <label for="phone">Phone Number 📞</label>
+            <select id="countrycode" name="countrycode">
+                <option value="+380">+380 (UA)</option>
+                <option value="+1">+1 (US)</option>
+                <option value="+46">+46 (SE)</option>
+                <option value="+44">+44 (GB)</option>
+                <option value="+34">+34 (ES)</option>
+            </select>
+            <input type="tel" id="phone" name="phone" placeholder="00-000-00-00" pattern="[0-9]{9}"> <br>
+        </fieldset>
+        <fieldset>
+            <legend>Message 🗨️</legend>
+            <label for="text2">Message Text</label> <br>
+            <textarea name="text2" id="text2" rows="2" cols="40" placeholder="Leave a message... or a love story ✨"></textarea> <br>
+            <label for="messagetype">Message Type</label>
+            <select id="messagetype" name="messagetype">
+                <option value="question">Question ❓</option>
+                <option value="suggestion">Suggestion 💡</option>
+                <option value="complaint">Complaint ⚠️</option>
+                <option value="other">Other 📌</option>
+            </select>
+        </fieldset>
+        <fieldset>
+            <legend>How to contact you? 📱</legend>
+            <input type="radio" id="contactphone" name="contactmethod" value="phone">
+            <label for="contactphone">Phone 📞</label>
+            <input type="radio" id="contactemail" name="contactmethod" value="email">
+            <label for="contactemail">Email 💌</label>
+        </fieldset>
+        <label for="attachment">Attach Image 🖼️</label>
+        <input type="file" id="attachment" name="attachment" accept="image/*"> <br>
+        <br>
+        <button type="button">Submit 🚀</button>
+    </form>
+    <footer>
+        <p>© 2025 | Developed by 3rd-year Applied Linguistics student Mykhailo Babilia. Music, magic, and a little bit of Swiftiness included. 🎵✨</p> <br>
+    </footer>
+    <script>
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbzNh53uv30g9lJcBhXpTx37Ln-7ePgi3yScC1i1jfPZM8gQVR919blHO6ej-nyStngDhg/exec'; // Заміни на твій Web App URL
+      const form = document.getElementById('feedbackForm');
+      const button = form.querySelector('button[type="button"]');
+
+      button.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const data = {
+          sheet: 'Feedback',
+          name: formData.get('name') || '',
+          surname: formData.get('surname') || '',
+          email2: formData.get('email2') || '',
+          phone: (formData.get('countrycode') || '') + ' ' + (formData.get('phone') || ''),
+          text2: formData.get('text2') || '',
+          messagetype: formData.get('messagetype') || 'other',
+          contactmethod: formData.get('contactmethod') || 'none'
+        };
+
+        console.log('Sending data:', data); // Дебаг
+
+        const fileInput = form.querySelector('input[type="file"]');
+        if (fileInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = async (event) => {
+            data.fileName = fileInput.files[0].name;
+            data.fileMimeType = fileInput.files[0].type;
+            data.fileData = event.target.result.split(',')[1];
+
+            try {
+              const response = await fetch(scriptURL, {
+                method: 'POST',
+                body: new URLSearchParams(data),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+              });
+              const result = await response.json();
+              if (result.result === 'success') {
+                window.location.href = 'thankyou.html';
+              } else {
+                console.error('Server error:', result.error);
+                alert('Помилка відправки: ' + result.error);
+              }
+            } catch (error) {
+              console.error('Client error:', error);
+              alert('Помилка: ' + error.message);
+            }
+          };
+          reader.readAsDataURL(fileInput.files[0]);
+        } else {
+          try {
+            const response = await fetch(scriptURL, {
+              method: 'POST',
+              body: new URLSearchParams(data),
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+            const result = await response.json();
+            if (result.result === 'success') {
+              window.location.href = 'thankyou.html';
+            } else {
+              console.error('Server error:', result.error);
+              alert('Помилка відправки: ' + result.error);
+            }
+          } catch (error) {
+            console.error('Client error:', error);
+            alert('Помилка: ' + error.message);
+          }
+        }
+      });
+    </script>
+</body>
+</html>

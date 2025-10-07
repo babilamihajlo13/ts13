@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Login</title>
+</head>
+<body>
+    <header>
+        <h1>Taylor's World</h1>
+        <p>Not just albums — chapters of a life in lyrics.</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Swiftie Hub</a></li>
+            <li><a href="login.html">Join the Era</a></li>
+            <li><a href="registration.html">Become a Swiftie</a></li>
+            <li><a href="feedback.html">Share Your Story</a></li>
+        </ul>
+    </nav>
+    <h3>Login</h3>
+    <form id="loginForm" method="post">
+        <fieldset>
+            <label for="login">Username ❤️</label>
+            <input type="text" id="login" name="login" placeholder="Taylor Swift"> <br>
+            <label for="password">Password 🔒</label>
+            <input type="password" id="password" name="password" placeholder="Secret era"> <br>
+            <label for="stayloggedin">Stay logged in 🛡️</label>
+            <input type="checkbox" id="stayloggedin" name="stayloggedin">
+        </fieldset> <br>
+        <button type="button">Sign In 🔑</button>
+    </form>
+    <footer>
+        <p>© 2025 | Developed by 3rd-year Applied Linguistics student Mykhailo Babilia. Music, magic, and a little bit of Swiftiness included. 🎵✨</p> <br>
+    </footer>
+    <script>
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbzNh53uv30g9lJcBhXpTx37Ln-7ePgi3yScC1i1jfPZM8gQVR919blHO6ej-nyStngDhg/exec'; // Заміни на твій Web App URL
+      const form = document.getElementById('loginForm');
+      const button = form.querySelector('button[type="button"]');
+
+      button.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const data = {
+          sheet: 'Login',
+          login: formData.get('login') || '',
+          password: formData.get('password') || '',
+          stayloggedin: formData.get('stayloggedin') ? 'Yes' : 'No'
+        };
+
+        console.log('Sending data:', data); // Дебаг
+
+        try {
+          const response = await fetch(scriptURL, {
+            method: 'POST',
+            body: new URLSearchParams(data),
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          });
+          const result = await response.json();
+          if (result.result === 'success') {
+            window.location.href = 'thankyou.html';
+          } else {
+            console.error('Server error:', result.error);
+            alert('Помилка відправки: ' + result.error);
+          }
+        } catch (error) {
+          console.error('Client error:', error);
+          alert('Помилка: ' + error.message);
+        }
+      });
+    </script>
+</body>
+</html>
